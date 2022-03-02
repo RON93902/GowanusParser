@@ -13,7 +13,6 @@ file = '122475_3919_DataTables.pdf'
 
 tables = tabula.read_pdf(file, pages="all")
 
-<<<<<<< HEAD
 #test changes for learning git
 
 
@@ -30,5 +29,3 @@ def format_table(table_object):
     
     # 2. Populate template with data taken from 'table_object'
     
-
->>>>>>> main
