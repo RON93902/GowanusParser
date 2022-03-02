@@ -14,6 +14,7 @@ file = '122475_3919_DataTables.pdf'
 tables = tabula.read_pdf(file, pages="all")
 
 page_1_table = tables[0]
+page_2_table = tables[1]
 
 
 def format_table(table_object):
