@@ -15,8 +15,6 @@ tables = tabula.read_pdf(file, pages="all")
 
 #test changes for learning git
 
-
-=======
 page_1_table = tables[0]
 page_2_table = tables[1]
 
