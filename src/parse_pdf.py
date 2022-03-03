@@ -8,6 +8,7 @@ Created on Wed Mar  2 11:20:52 2022
 import tabula
 import os
 import pandas as pd
+import numpy as np
 
 file = '122475_3919_DataTables.pdf'
 
@@ -27,3 +28,14 @@ def format_table(table_object):
     
     # 2. Populate template with data taken from 'table_object'
     
+#####
+
+
+endOfTable = 'no'
+for i in range(0,len(tables)-1):
+    if endOfTable == 'yes':
+        temp_dataFrame = tables[i][0:0]
+    if 'Total' in tables[i].iloc[len(tables[i].index)-1,0]:
+        print('yes')
+        endOfTable = 'yes'
+    # temp_DataFrame.append(tables[i].rows[6:])
