@@ -31,13 +31,18 @@ page_2_table = tables[1]
     
 #     # 2. Populate template with data taken from 'table_object'
 
+# how to create en empty list variable?
 
+target = []
+j = 0
 for i in range(45):
-    if ('Total' not in tables[i].iloc[len(tables[i].index)-1,0]):
-        temp_dataFrame = tables[i]
-    else :
-        temp_dataFrame = tables[i-1].append(tables[i][6:], ignore_index = True) 
-        table_I9A[2*i-1]= temp_dataFrame
+    if ('Total' in tables[i].iloc[len(tables[i].index)-1,0]):
+        j = j + 1
+        # copy column headers from tables[i] to target[j]
+
+    temp_dataFrame = tables[i-1].append(tables[i][6:], ignore_index = True) 
+            target[j] = temp_dataFrame
+        
         
         
         
