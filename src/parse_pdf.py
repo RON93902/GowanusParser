@@ -14,29 +14,13 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 import re
 
 file = '122475_3919_DataTables.pdf'
+template = 'cleaned.tabula-template.json'
 
-
-# Clean pdf file
-pdf_in = PdfFileReader(file,'rb')
-pdf_out = PdfFileWriter()
-for p in [pdf_in.getPage(i) for i in range(0, pdf_in.getNumPages())]:
-    text = p.extractText()
-    if not re.search(r'Page Intentionally Left Blank', text, re.I):
-        pdf_out.addPage(p)
-with open('cleaned.pdf', 'wb') as f:
-    pdf_out.write(f)
 
 # Read in tables from cleaned pdf
-tables = tabula.read_pdf('cleaned.pdf', pages="all", pandas_options={'header': None}, multiple_tables=True)
-
-# table_I9A, index 0 to 44 in tables
-# table_I10A, index 45 to 67 in tables
-# table_I12A, index 68 to 88 in tables
-
-#test changes for learning git
-
-# page_1_table = tables[0]
-# page_2_table = tables[1]
+tables = tabula.read_pdf_with_template(file, template)
+for i in range(0,len(tables)):
+    tables[i] = tables[i].T.reset_index().T
 
 # # def format_table(table_object):
     
@@ -56,7 +40,12 @@ tables = tabula.read_pdf('cleaned.pdf', pages="all", pandas_options={'header': N
 #     target[j] = target[j].append(tables[i-1].append(tables[i][6:], ignore_index = True) )
 #     table_I9A[2*i-1]= temp_dataFrame
         
-        
+for i in range(0,len(tables)-1):
+    if (tables[i] == 'GEC-SD-98').any().idxmax() > 0:
+        print('table ', i)
+
+df = tables[0]
+a = df.where(df=='GC-SED-83').dropna(how='all')
         
       
         
