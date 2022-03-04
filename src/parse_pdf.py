@@ -24,7 +24,7 @@ tables = tabula.read_pdf(file, pages="all")
 target = []
 
 target.append(tables[0][:6])
-j = 0 + 1
+j = 0
 for i in range(45):
     if ('Total' in tables[i].iloc[len(tables[i].index)-1,0]):
         j = j + 1
