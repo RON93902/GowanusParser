@@ -5,7 +5,7 @@ Created on Wed Mar  2 11:20:52 2022
 @author: STA94720
 """
 
-# import libraries
+### import libraries
 import tabula
 import os
 import pandas as pd
@@ -14,14 +14,15 @@ import sys
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import re
 
-# specify source file and parsing template
+### specify source file and parsing template
 file = '122475_3919_Datatables.pdf'
 template = '122475_3919_DataTables.tabula-template.json'
 
 
-# Read in tables_raw from cleaned pdf
+### Read in tables_raw from source pdf
 tables_raw = tabula.read_pdf_with_template(file, template)
 
+### clean raw data
 # remove blank pages
 tables_raw = [tables_raw[i] for i in range(0,len(tables_raw)) if tables_raw[i].size > 4]
 
@@ -48,26 +49,17 @@ for i in range(0,len(tables_raw)):
         tables_raw[i-1].insert(0, "0", "")
         tables_raw[i-1].columns = pd.RangeIndex(tables_raw[i-1].columns.size)
         tables_clean[j] = pd.concat([tables_raw[i-1],tables_clean[j]])
-        tables_clean[j] = tables_clean[j].reset_index()
+        tables_clean[j] = tables_clean[j].reset_index().iloc[:,1:]
         j = j + 1
-        
-    
 
-# # def format_table(table_object):
-    
-# #     # 1. Create template dataframe (where the results are stored)
-# #     ##   - columns headers = ID_Short, STATION, SAMPLE_ID, TOP_ft, BOT_ft, SampleType, Analyte, Units, Result, Qualifier, Cite
-# #     result = pd.DataFrame(columns=['ID_Short', 'STATION', 'SAMPLE_ID', 'TOP_ft', 'BOT_ft', 'SampleType', 'Analyte', 'Units', 'Result', 'Qualifier', 'Cite'])
-    
-# #     # 2. Populate template with data taken from 'table_object'
-        
-# endOfTable = 'no'
-# for i in range(0,len(tables_raw)-1):
-#     if endOfTable == 'yes':
-#         temp_dataFrame = tables_raw[i][0:0]
-#     if 'Total' in tables_raw[i].iloc[len(tables_raw[i].index)-1,0]:
-#         print('yes')
-#         endOfTable = 'yes'
-#     # temp_DataFrame.append(tables_raw[i].rows[6:])
+### populate final table of data
+res = pd.DataFrame(columns=['ID_Short', 'STATION', 'SAMPLE_ID', 'TOP_ft', 'BOT_ft', 'SampleType', 'Analyte', 'Units', 'Result', 'Qualifier', 'Cite'])
 
-# tabula.convert_into(pdf_path, "test.csv", output_format="csv", stream=True)
+# loop over all columns of all list items in 'tables_clean'
+for j in range(0,len(tables_clean)):
+    for i in tables_clean[j]:
+        if i > 1:
+            units = tables_clean[j].iloc[8,1] # units always shows up here so
+    
+    
+    
