@@ -81,16 +81,6 @@ for i in range(0,len(tables_raw)):
         j = j + 1
 
 ##### WIP #####
-### populate final table of data
-# res = pd.DataFrame(columns=['ID_Short', 'STATION', 'SAMPLE_ID', 'TOP_ft', 'BOT_ft', 'SampleType', 'Analyte', 'Units', 'Result', 'Qualifier', 'Cite'])
-
-# # loop over all columns of all list items in 'tables_clean'
-# for j in range(0,len(tables_clean)):
-#     for i in tables_clean[j]:
-#         if i > 1:
-#             units = tables_clean[j].iloc[8,1] # units always shows up here so
-
-##### WIP #####
 ### populate final table of data    
 #Data Compilation - Master Spreadsheet Production
 
