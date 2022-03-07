@@ -1,4 +1,4 @@
-# Gowanas PDF Parser
+# Gowanus PDF Parser
 
 ## Description
 This repository hosts a collection of scripts that facilitate parsing of pdf data for the Gowanas project. 
@@ -17,9 +17,9 @@ This repository hosts a collection of scripts that facilitate parsing of pdf dat
 ## Installation Instructions
 
 1. Install with pip <br />
-`pip install git+https://github.com/mottmacdonaldglobal/GowanasParser.git`
+`pip install git+https://github.com/mottmacdonaldglobal/GowanusParser.git`
 2. Import the library <br />
-`import GowanasParser`
+`import GowanusParser`
 
 ## Running the Code
 WIP
