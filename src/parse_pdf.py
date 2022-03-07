@@ -16,13 +16,18 @@ import re
 
 # specify source file and parsing template
 file = '122475_3919_Datatables.pdf'
-template = 'cleaned.tabula-template.json'
+template = '122475_3919_DataTables.tabula-template.json'
 
 
 # Read in tables_raw from cleaned pdf
 tables_raw = tabula.read_pdf_with_template(file, template)
+
+# remove blank pages
+tables_raw = [tables_raw[i] for i in range(0,len(tables_raw)) if tables_raw[i].size > 1]
+
+# reset indices
 for i in range(0,len(tables_raw)):
-    tables_raw[i] = tables_raw[i].T.reset_index().T
+    tables_raw[i] = tables_raw[i].T.reset_index().T.reset_index()
 
 # generate 'tables_clean' as a list of dataframes containing one set of header
 # information for all data of each table from the source
