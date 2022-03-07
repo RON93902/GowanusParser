@@ -18,6 +18,8 @@ file = '122475_3919_Datatables.pdf'
 template = '122475_3919_DataTables.tabula-template.json'
 template_cite = '122475_3919_DataTables_cite.tabula-template.json'
 
+#Compilation Choice - One big table or One big list with all dataframes
+Compilation_Request="One Final List with Separate Dataframes" # One Final Dataframe" or "One Final List with Separate Dataframes"
 
 ### Read in tables_raw from source pdf
 tables_raw = tabula.read_pdf_with_template(file, template)
@@ -72,8 +74,6 @@ Result=[]
 Qualifier=[]
 Cite=[]
 
-#Compilation for Requested Data
-
 for tc in range(len(tables_clean)):
     
     #Define master of variables for each table
@@ -127,31 +127,51 @@ for tc in range(len(tables_clean)):
         BOT_ft2.extend(BOT_ft1)
         SampleType2.extend(SampleType1)
         Cite2.extend(Cite1)
+    
+    #List of Final Dataframes Creation
+    
+    #If you want it to be one big table with all compiled data
+    if Compilation_Request == "One Final Dataframe":
+        ID_Short.extend(ID_Short2)
+        STATION.extend(STATION2)
+        SAMPLE_ID.extend(SAMPLE_ID2)
+        TOP_ft.extend(TOP_ft2)
+        BOT_ft.extend(BOT_ft2)
+        SampleType.extend(SampleType2)
+        Analyte.extend(Analyte2)
+        Units.extend(Units2)
+        Result.extend(Result2)
+        Qualifier.extend(Qualifier2)
+        Cite.extend(Cite2)
         
-    #Create Final List of Dataframes
-    ID_Short.append(ID_Short2)
-    STATION.append(STATION2)
-    SAMPLE_ID.append(SAMPLE_ID2)
-    TOP_ft.append(TOP_ft2)
-    BOT_ft.append(BOT_ft2)
-    SampleType.append(SampleType2)
-    Analyte.append(Analyte2)
-    Units.append(Units2)
-    Result.append(Result2)
-    Qualifier.append(Qualifier2)
-    Cite.append(Cite2)
+        tables_master=pd.DataFrame({'ID_Short': ID_Short,'STATION': STATION,'SAMPLE_ID': SAMPLE_ID,
+                                'TOP_ft': TOP_ft, 'BOT_ft': BOT_ft, 'SampleType': SampleType,
+                                'Analyte': Analyte, 'Units': Units, 'Result': Result,
+                                'Qualifier': Qualifier, 'Cite': Cite})
+    
+    #If you want it to be one big list with all dataframes stored inside
+    elif Compilation_Request == "One Final List with Separate Dataframes":
+        
+        tables_master2=pd.DataFrame({'ID_Short': ID_Short2,'STATION': STATION2,'SAMPLE_ID': SAMPLE_ID2,
+                                'TOP_ft': TOP_ft2, 'BOT_ft': BOT_ft2, 'SampleType': SampleType2,
+                                'Analyte': Analyte2, 'Units': Units2, 'Result': Result2,
+                                'Qualifier': Qualifier2, 'Cite': Cite2})
+        
+        tables_master.append(tables_master2)
 
 ###dataframe creation and export to excel
 export_dir=r'C:\Users\BAY92591\OneDrive - Mott MacDonald\Desktop\Mott MacDonald\Gowanas\PDF Parser\Update\GowanasParser-wip_kevin\src'
 writer = pd.ExcelWriter(export_dir+'\\'+'GOWANUS MASTER SUMMARY.xlsx', engine='xlsxwriter')
 
-#Master Dataframe Creation
-tables_master=pd.DataFrame({'ID_Short': ID_Short,'STATION': STATION,'SAMPLE_ID': SAMPLE_ID,
-                            'TOP_ft': TOP_ft, 'BOT_ft': BOT_ft, 'SampleType': SampleType,
-                            'Analyte': Analyte, 'Units': Units, 'Result': Result,
-                            'Qualifier': Qualifier, 'Cite': Cite})
-tables_master.to_excel(writer,'SUMMARY', index = False)
+#Dataframe export to each tab in the spreadsheet
+
+if Compilation_Request == "One Final Dataframe":
+    tables_master.to_excel(writer,'Summary Table', index = False)
+
+elif Compilation_Request == "One Final List with Separate Dataframes":
+    for df in range(0,len(tables_master)):
+        tables_master[df].to_excel(writer,'Table Number '+str(df+1), index = False)
 
 writer.save()
-writer.close()    
+writer.close()       
     
