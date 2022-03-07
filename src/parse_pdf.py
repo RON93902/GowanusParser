@@ -17,10 +17,12 @@ import re
 ### specify source file and parsing template
 file = '122475_3919_Datatables.pdf'
 template = '122475_3919_DataTables.tabula-template.json'
+template_cite = '122475_3919_DataTables_cite.tabula-template.json'
 
 
 ### Read in tables_raw from source pdf
 tables_raw = tabula.read_pdf_with_template(file, template)
+tables_raw_cite = tabula.read_pdf_with_template(file, template_cite)
 
 ### clean raw data
 # remove blank pages
@@ -50,8 +52,10 @@ for i in range(0,len(tables_raw)):
         tables_raw[i-1].columns = pd.RangeIndex(tables_raw[i-1].columns.size)
         tables_clean[j] = pd.concat([tables_raw[i-1],tables_clean[j]])
         tables_clean[j] = tables_clean[j].reset_index().iloc[:,1:]
+        tables_clean[j].iat[0,0] = tables_raw_cite[int(round((i+1)/2-1))].columns[0] # unstable (requires tables to always span 2 pages)
         j = j + 1
 
+##### WIP #####
 ### populate final table of data
 res = pd.DataFrame(columns=['ID_Short', 'STATION', 'SAMPLE_ID', 'TOP_ft', 'BOT_ft', 'SampleType', 'Analyte', 'Units', 'Result', 'Qualifier', 'Cite'])
 
