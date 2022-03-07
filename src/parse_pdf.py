@@ -63,7 +63,7 @@ res = pd.DataFrame(columns=['ID_Short', 'STATION', 'SAMPLE_ID', 'TOP_ft', 'BOT_f
 for j in range(0,len(tables_clean)):
     for i in tables_clean[j]:
         if i > 1:
-            units = tables_clean[j].iloc[8,1] # units always shows up here so
+            units = tables_clean[j].iloc[8,1] # units always shows up here
     
     
     
