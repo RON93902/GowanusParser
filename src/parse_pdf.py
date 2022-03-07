@@ -11,10 +11,8 @@ import os
 import pandas as pd
 import numpy as np
 import sys
-# from PyPDF2 import PdfFileWriter, PdfFileReader
 import re
 
-<<<<<<< HEAD
 # Extract PDF table in the format of the template
 file = '122475_3919_DataTables.pdf'
 template = 'cleaned.tabula-template.json'
@@ -41,7 +39,6 @@ for i in range(0,len(tables_raw)):
 #         j = j + 1
 
 # # tabula.convert_into(pdf_path, "test.csv", output_format="csv", stream=True)
-=======
 ### specify source file and parsing template
 file = '122475_3919_Datatables.pdf'
 template = '122475_3919_DataTables.tabula-template.json'
@@ -194,4 +191,3 @@ tables_master.to_excel(writer,'SUMMARY', index = False)
 writer.save()
 writer.close()    
     
->>>>>>> 61791d48fbd42d2652aeccba18cce93a77a7d487
