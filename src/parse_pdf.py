@@ -23,11 +23,11 @@ template = '122475_3919_DataTables.tabula-template.json'
 tables_raw = tabula.read_pdf_with_template(file, template)
 
 # remove blank pages
-tables_raw = [tables_raw[i] for i in range(0,len(tables_raw)) if tables_raw[i].size > 1]
+tables_raw = [tables_raw[i] for i in range(0,len(tables_raw)) if tables_raw[i].size > 4]
 
 # reset indices
 for i in range(0,len(tables_raw)):
-    tables_raw[i] = tables_raw[i].T.reset_index().T.reset_index()
+    tables_raw[i] = tables_raw[i].T.reset_index().T
 
 # generate 'tables_clean' as a list of dataframes containing one set of header
 # information for all data of each table from the source
@@ -48,6 +48,7 @@ for i in range(0,len(tables_raw)):
         tables_raw[i-1].insert(0, "0", "")
         tables_raw[i-1].columns = pd.RangeIndex(tables_raw[i-1].columns.size)
         tables_clean[j] = pd.concat([tables_raw[i-1],tables_clean[j]])
+        tables_clean[j] = tables_clean[j].reset_index()
         j = j + 1
         
     
