@@ -13,10 +13,10 @@ import numpy as np
 import sys
 import re
 
-### specify source file and parsing template
-file = '122475_3919_Datatables.pdf'
-template = '122475_3919_DataTables.tabula-template.json'
-template_cite = '122475_3919_DataTables_cite.tabula-template.json'
+### user inputs
+file = '122475_3919_Datatables.pdf' # data source
+template = '122475_3919_DataTables.tabula-template.json' # template for parsing the main table
+template_cite = '122475_3919_DataTables_cite.tabula-template.json' #template file to extract citations
 
 
 ### Read in tables_raw from source pdf
@@ -73,7 +73,6 @@ Qualifier=[]
 Cite=[]
 
 #Compilation for Requested Data
-
 for tc in range(len(tables_clean)):
     
     #Define master of variables for each table
@@ -142,8 +141,8 @@ for tc in range(len(tables_clean)):
     Cite.append(Cite2)
 
 ###dataframe creation and export to excel
-export_dir=r'C:\Users\BAY92591\OneDrive - Mott MacDonald\Desktop\Mott MacDonald\Gowanas\PDF Parser\Update\GowanasParser-wip_kevin\src'
-writer = pd.ExcelWriter(export_dir+'\\'+'GOWANUS MASTER SUMMARY.xlsx', engine='xlsxwriter')
+export_dir=os.getcwd()
+writer = pd.ExcelWriter(os.path.join(export_dir,'GOWANUS MASTER SUMMARY.xlsx'), engine='xlsxwriter')
 
 #Master Dataframe Creation
 tables_master=pd.DataFrame({'ID_Short': ID_Short,'STATION': STATION,'SAMPLE_ID': SAMPLE_ID,
