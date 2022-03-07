@@ -11,7 +11,6 @@ import os
 import pandas as pd
 import numpy as np
 import sys
-# from PyPDF2 import PdfFileWriter, PdfFileReader
 import re
 
 ### specify source file and parsing template
@@ -54,16 +53,6 @@ for i in range(0,len(tables_raw)):
         tables_clean[j] = tables_clean[j].reset_index().iloc[:,1:]
         tables_clean[j].iat[0,0] = tables_raw_cite[int(round((i+1)/2-1))].columns[0] # unstable (requires tables to always span 2 pages)
         j = j + 1
-
-##### WIP #####
-### populate final table of data
-# res = pd.DataFrame(columns=['ID_Short', 'STATION', 'SAMPLE_ID', 'TOP_ft', 'BOT_ft', 'SampleType', 'Analyte', 'Units', 'Result', 'Qualifier', 'Cite'])
-
-# # loop over all columns of all list items in 'tables_clean'
-# for j in range(0,len(tables_clean)):
-#     for i in tables_clean[j]:
-#         if i > 1:
-#             units = tables_clean[j].iloc[8,1] # units always shows up here so
 
 ##### WIP #####
 ### populate final table of data    
