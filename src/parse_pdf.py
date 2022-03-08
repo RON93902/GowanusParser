@@ -29,7 +29,7 @@ tables_raw = [tables_raw[i] for i in range(0,len(tables_raw)) if tables_raw[i].s
 
 # reset indices
 for i in range(0,len(tables_raw)):
-    tables_raw[i] = tables_raw[i].T.reset_index().T
+    tables_raw[i] = tables_raw[i].T.reset_index().T.reset_index(drop=True)
 
 # generate 'tables_clean' as a list of dataframes containing one set of header
 # information for all data of each table from the source
@@ -68,12 +68,12 @@ for i in range(0,len(tables_raw)):
         tables_clean[j] = tables_clean[j].reset_index().iloc[:,1:] # remove the extra index in column 1
         tables_clean[j].iat[0,0] = tables_raw_cite[int(round((i+1)/2-1))].columns[0] # unstable (requires tables to always span 2 pages)
         j = j + 1
-
+    
 ##### WIP #####
 ### populate final table of data    
 #Data Compilation - Master Spreadsheet Production
 
-#Define the mother of variables for all compiled clean tables
+# Define the mother of variables for all compiled clean tables
 tables_master=[]
 ID_Short=[]
 STATION=[]
@@ -167,5 +167,12 @@ tables_master=pd.DataFrame({'ID_Short': ID_Short,'STATION': STATION,'SAMPLE_ID':
 tables_master.to_excel(writer,'SUMMARY', index = False)
 
 writer.save()
-writer.close()    
-    
+writer.close()  
+
+### export tables_clean
+# export_dir=r'C:\GitHub\GowanusParser\src'
+# writer = pd.ExcelWriter(export_dir+'\\'+'122475_3919_DataTables.xlsx', engine='xlsxwriter')
+# for df in range(0,len(tables_clean)):
+#         tables_clean[df].to_excel(writer,'Table Number '+str(df+1), index = False, header=False)
+# writer.save()
+# writer.close()
