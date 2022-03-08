@@ -13,11 +13,11 @@ import numpy as np
 import sys
 import re
 
-### specify source file and parsing template
-file = '122475_3919_Datatables.pdf'
-template = '122475_3919_DataTables.tabula-template.json'
-template_cite = '122475_3919_DataTables_cite.tabula-template.json'
-
+### user inputs
+file = '122475_3919_Datatables.pdf' # data source
+template = '122475_3919_DataTables.tabula-template.json' # template for parsing the main table
+template_cite = '122475_3919_DataTables_cite.tabula-template.json' #template file to extract citations
+Separate_Tabs="yes" # "yes" or "no" Compilation Choice - One big table or One big list with all dataframes
 
 ### Read in tables_raw from source pdf
 tables_raw = tabula.read_pdf_with_template(file, template)
@@ -29,7 +29,7 @@ tables_raw = [tables_raw[i] for i in range(0,len(tables_raw)) if tables_raw[i].s
 
 # reset indices
 for i in range(0,len(tables_raw)):
-    tables_raw[i] = tables_raw[i].T.reset_index().T
+    tables_raw[i] = tables_raw[i].T.reset_index().T.reset_index(drop=True)
 
 # generate 'tables_clean' as a list of dataframes containing one set of header
 # information for all data of each table from the source
@@ -47,18 +47,33 @@ for i in range(0,len(tables_raw)):
     # insert header information into 'tables_clean' list item if end of table is reached
     # move to next dataframe from 'tables_raw' if appropriate
     if ('Total' in tables_raw[i].iloc[len(tables_raw[i].index)-1,0]):
-        tables_raw[i-1].insert(0, "0", "")
-        tables_raw[i-1].columns = pd.RangeIndex(tables_raw[i-1].columns.size)
-        tables_clean[j] = pd.concat([tables_raw[i-1],tables_clean[j]])
-        tables_clean[j] = tables_clean[j].reset_index().iloc[:,1:]
+        tables_raw[i-1].insert(0, "0", "") # insert blank column to align column headers between front matter and main table data
+        tables_raw[i-1].columns = pd.RangeIndex(tables_raw[i-1].columns.size) # reset column headers of front matter
+        tables_raw[i-1] = tables_raw[i-1].reset_index().iloc[:,1:] # reset row index of front matter
+        tables_raw[i-1].loc[0] = tables_raw[i-1].loc[0].str.split('.').str[0] # remove spurious '.n' column delimiters inserted upon initial read of front matter
+        
+        # concat front matter row data with row above if value in column 0 is nan
+        rows_to_delete = []
+        for row in range(1,4):
+            if pd.isna(tables_raw[i-1].loc[row]).any():
+                tables_raw[i-1].loc[row-1] = tables_raw[i-1][row-1:row+1].apply(lambda x: ''.join(x.astype(str)))
+                tables_raw[i-1].loc[row-1] = tables_raw[i-1].loc[row-1].map(lambda x: x.rstrip('nan'))    
+                rows_to_delete.append(row)
+        
+        # delete junk data
+        for junk in rows_to_delete:
+            tables_raw[i-1] = tables_raw[i-1].drop(junk)
+                
+        tables_clean[j] = pd.concat([tables_raw[i-1],tables_clean[j]]) # add front matter to compiled table entry
+        tables_clean[j] = tables_clean[j].reset_index().iloc[:,1:] # remove the extra index in column 1
         tables_clean[j].iat[0,0] = tables_raw_cite[int(round((i+1)/2-1))].columns[0] # unstable (requires tables to always span 2 pages)
         j = j + 1
-
+    
 ##### WIP #####
 ### populate final table of data    
 #Data Compilation - Master Spreadsheet Production
 
-#Define the mother of variables for all compiled clean tables
+# Define the mother of variables for all compiled clean tables
 tables_master=[]
 ID_Short=[]
 STATION=[]
@@ -73,7 +88,6 @@ Qualifier=[]
 Cite=[]
 
 #Compilation for Requested Data
-
 for tc in range(len(tables_clean)):
     
     #Define master of variables for each table
@@ -129,29 +143,56 @@ for tc in range(len(tables_clean)):
         Cite2.extend(Cite1)
         
     #Create Final List of Dataframes
-    ID_Short.append(ID_Short2)
-    STATION.append(STATION2)
-    SAMPLE_ID.append(SAMPLE_ID2)
-    TOP_ft.append(TOP_ft2)
-    BOT_ft.append(BOT_ft2)
-    SampleType.append(SampleType2)
-    Analyte.append(Analyte2)
-    Units.append(Units2)
-    Result.append(Result2)
-    Qualifier.append(Qualifier2)
-    Cite.append(Cite2)
+    
+    #If you want it to be one big table with all compiled data
+    if Separate_Tabs == "no":
+        ID_Short.extend(ID_Short2)
+        STATION.extend(STATION2)
+        SAMPLE_ID.extend(SAMPLE_ID2)
+        TOP_ft.extend(TOP_ft2)
+        BOT_ft.extend(BOT_ft2)
+        SampleType.extend(SampleType2)
+        Analyte.extend(Analyte2)
+        Units.extend(Units2)
+        Result.extend(Result2)
+        Qualifier.extend(Qualifier2)
+        Cite.extend(Cite2)
+        
+        tables_master=pd.DataFrame({'ID_Short': ID_Short,'STATION': STATION,'SAMPLE_ID': SAMPLE_ID,
+                                'TOP_ft': TOP_ft, 'BOT_ft': BOT_ft, 'SampleType': SampleType,
+                                'Analyte': Analyte, 'Units': Units, 'Result': Result,
+                                'Qualifier': Qualifier, 'Cite': Cite})
+    
+    #If you want it to be one big list with all dataframes stored inside
+    elif Separate_Tabs == "yes":
+        
+        tables_master2=pd.DataFrame({'ID_Short': ID_Short2,'STATION': STATION2,'SAMPLE_ID': SAMPLE_ID2,
+                                'TOP_ft': TOP_ft2, 'BOT_ft': BOT_ft2, 'SampleType': SampleType2,
+                                'Analyte': Analyte2, 'Units': Units2, 'Result': Result2,
+                                'Qualifier': Qualifier2, 'Cite': Cite2})
+        
+        tables_master.append(tables_master2)
 
 ###dataframe creation and export to excel
-export_dir=r'C:\Users\BAY92591\OneDrive - Mott MacDonald\Desktop\Mott MacDonald\Gowanas\PDF Parser\Update\GowanasParser-wip_kevin\src'
-writer = pd.ExcelWriter(export_dir+'\\'+'GOWANUS MASTER SUMMARY.xlsx', engine='xlsxwriter')
+export_dir=os.getcwd()
+writer = pd.ExcelWriter(os.path.join(export_dir,'GOWANUS MASTER SUMMARY.xlsx'), engine='xlsxwriter')
 
-#Master Dataframe Creation
-tables_master=pd.DataFrame({'ID_Short': ID_Short,'STATION': STATION,'SAMPLE_ID': SAMPLE_ID,
-                            'TOP_ft': TOP_ft, 'BOT_ft': BOT_ft, 'SampleType': SampleType,
-                            'Analyte': Analyte, 'Units': Units, 'Result': Result,
-                            'Qualifier': Qualifier, 'Cite': Cite})
-tables_master.to_excel(writer,'SUMMARY', index = False)
+#Dataframe export to each tab in the spreadsheet
+
+if Separate_Tabs == "no":
+    tables_master.to_excel(writer,'Summary Table', index = False)
+
+elif Separate_Tabs == "yes":
+    for df in range(0,len(tables_master)):
+        tables_master[df].to_excel(writer,'Table Number '+str(df+1), index = False)
 
 writer.save()
-writer.close()    
-    
+writer.close()  
+
+### export tables_clean
+# export_dir=r'C:\GitHub\GowanusParser\src'
+# writer = pd.ExcelWriter(export_dir+'\\'+'122475_3919_DataTables.xlsx', engine='xlsxwriter')
+# for df in range(0,len(tables_clean)):
+#         tables_clean[df].to_excel(writer,'Table Number '+str(df+1), index = False, header=False)
+# writer.save()
+# writer.close()

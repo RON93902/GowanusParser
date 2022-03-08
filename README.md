@@ -6,7 +6,7 @@ This repository hosts a collection of scripts that facilitate parsing of pdf dat
 ## Repository Ownership
 * **Practice**: TBD
 * **Sector**: TBD
-* **Original Author(s)**: Kevin Stanton and Wenyong Rong
+* **Original Author(s)**: Kevin Stanton, Wenyong Rong, and Alvin Bayudanto
 * **Contact Details for Current Repository Owner(s)**: - kevin.stanton@mottmac.com
 
 ## Requirements
