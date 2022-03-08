@@ -47,10 +47,25 @@ for i in range(0,len(tables_raw)):
     # insert header information into 'tables_clean' list item if end of table is reached
     # move to next dataframe from 'tables_raw' if appropriate
     if ('Total' in tables_raw[i].iloc[len(tables_raw[i].index)-1,0]):
-        tables_raw[i-1].insert(0, "0", "")
-        tables_raw[i-1].columns = pd.RangeIndex(tables_raw[i-1].columns.size)
-        tables_clean[j] = pd.concat([tables_raw[i-1],tables_clean[j]])
-        tables_clean[j] = tables_clean[j].reset_index().iloc[:,1:]
+        tables_raw[i-1].insert(0, "0", "") # insert blank column to align column headers between front matter and main table data
+        tables_raw[i-1].columns = pd.RangeIndex(tables_raw[i-1].columns.size) # reset column headers of front matter
+        tables_raw[i-1] = tables_raw[i-1].reset_index().iloc[:,1:] # reset row index of front matter
+        tables_raw[i-1].loc[0] = tables_raw[i-1].loc[0].str.split('.').str[0] # remove spurious '.n' column delimiters inserted upon initial read of front matter
+        
+        # concat front matter row data with row above if value in column 0 is nan
+        rows_to_delete = []
+        for row in range(1,4):
+            if pd.isna(tables_raw[i-1].loc[row]).any():
+                tables_raw[i-1].loc[row-1] = tables_raw[i-1][row-1:row+1].apply(lambda x: ''.join(x.astype(str)))
+                tables_raw[i-1].loc[row-1] = tables_raw[i-1].loc[row-1].map(lambda x: x.rstrip('nan'))    
+                rows_to_delete.append(row)
+        
+        # delete junk data
+        for junk in rows_to_delete:
+            tables_raw[i-1] = tables_raw[i-1].drop(junk)
+                
+        tables_clean[j] = pd.concat([tables_raw[i-1],tables_clean[j]]) # add front matter to compiled table entry
+        tables_clean[j] = tables_clean[j].reset_index().iloc[:,1:] # remove the extra index in column 1
         tables_clean[j].iat[0,0] = tables_raw_cite[int(round((i+1)/2-1))].columns[0] # unstable (requires tables to always span 2 pages)
         j = j + 1
 
