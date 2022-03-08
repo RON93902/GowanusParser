@@ -29,7 +29,7 @@ tables_raw = [tables_raw[i] for i in range(0,len(tables_raw)) if tables_raw[i].s
 
 # reset indices
 for i in range(0,len(tables_raw)):
-    tables_raw[i] = tables_raw[i].T.reset_index().T.reset_index(drop=True)
+    tables_raw[i] = tables_raw[i].T.reset_index().T
 
 # generate 'tables_clean' as a list of dataframes containing one set of header
 # information for all data of each table from the source
