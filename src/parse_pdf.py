@@ -188,11 +188,3 @@ elif Separate_Tabs == "yes":
 
 writer.save()
 writer.close()  
-
-### export tables_clean
-# export_dir=r'C:\GitHub\GowanusParser\src'
-# writer = pd.ExcelWriter(export_dir+'\\'+'122475_3919_DataTables.xlsx', engine='xlsxwriter')
-# for df in range(0,len(tables_clean)):
-#         tables_clean[df].to_excel(writer,'Table Number '+str(df+1), index = False, header=False)
-# writer.save()
-# writer.close()
