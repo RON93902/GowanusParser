@@ -17,7 +17,7 @@ import re
 file = '122475_3919_Datatables.pdf' # data source
 template = '122475_3919_DataTables.tabula-template.json' # template for parsing the main table
 template_cite = '122475_3919_DataTables_cite.tabula-template.json' #template file to extract citations
-Separate_Tabs="yes" # "yes" or "no" Compilation Choice - One big table or One big list with all dataframes
+Separate_Tabs="no" # "yes" or "no" Compilation Choice - One big table or One big list with all dataframes
 
 ### Read in tables_raw from source pdf
 tables_raw = tabula.read_pdf_with_template(file, template)
